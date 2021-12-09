@@ -1,0 +1,28 @@
+package /* Your package name */;
+
+import android.os.Handler;
+
+/**
+ * Created by Jet_Wang on 2021/12/9.
+ */
+public class HttpRequestRunnable implements Runnable {
+
+    private final Handler mHandler;
+    private final String mInput;
+
+    public HttpRequestRunnable(Handler handler, String input) {
+        mHandler = handler;
+        mInput = input;
+    }
+
+    @Override
+    public void run() {
+        try {
+            String response = HttpRequestImpl.requestWithRetry(3, mInput);
+            mHandler.obtainMessage(HttpRequestConstant.MSG_HTTP_REQUEST, HttpRequestConstant.MSG_REQUEST_SUCCESS, 0, response).sendToTarget();
+        } catch (Exception e) {
+            e.printStackTrace();
+            mHandler.obtainMessage(HttpRequestConstant.MSG_HTTP_REQUEST, HttpRequestConstant.MSG_REQUEST_FAIL, 0, e).sendToTarget();
+        }
+    }
+}
