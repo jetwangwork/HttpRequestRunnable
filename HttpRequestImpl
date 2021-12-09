@@ -1,0 +1,71 @@
+package /* Your package name */;
+
+import android.util.Log;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
+
+/**
+ * Created by Jet_Wang on 2021/12/9.
+ */
+public class HttpRequestImpl {
+
+	private static final String TAG = "HttpFacadeImpl";
+
+	public static String requestWithRetry(int maxRetry, String input) throws IOException {
+		if (maxRetry <= 0) {
+			maxRetry = 1;
+		}
+
+		int retryCounter = 0;
+		String response = null;
+
+		while (retryCounter < maxRetry) {
+			retryCounter = retryCounter + 1;
+
+			try {
+				response = connect(input);
+				break;
+			} catch (Exception var5) {
+				if (retryCounter >= maxRetry) {
+					throw var5;
+				}
+			}
+		}
+
+		return response;
+	}
+
+	private static String connect(String url) throws IOException {
+		Log.i(TAG, "<Input>" + url);
+
+		URL httpUrl = new URL(url);
+		HttpURLConnection httpConnect;
+		httpConnect = (HttpURLConnection)httpUrl.openConnection();
+		httpConnect.setReadTimeout(HttpRequestConstant.DEFAULT_SOCKET_TIMEOUT);
+		httpConnect.setConnectTimeout(HttpRequestConstant.DEFAULT_SOCKET_TIMEOUT);
+		httpConnect.setRequestMethod("GET");
+
+		long currentTime = System.currentTimeMillis();
+		long expires = httpConnect.getHeaderFieldDate("Expires", currentTime);
+		long lastModified = httpConnect.getHeaderFieldDate("Last-Modified", currentTime);
+
+		InputStreamReader inStreamRead = new InputStreamReader(httpConnect.getInputStream(), "UTF-8");
+		BufferedReader buffer = new BufferedReader(inStreamRead);
+		String resultData = "";
+
+		for(String inputLine = null; (inputLine = buffer.readLine()) != null; resultData = resultData + inputLine + "\n") {
+
+		}
+
+		buffer.close();
+		inStreamRead.close();
+		httpConnect.disconnect();
+
+		Log.i(TAG, "Return Value :" + resultData);
+		return resultData;
+	}
+}
