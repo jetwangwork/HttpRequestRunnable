@@ -1,0 +1,19 @@
+package /* Your package name */;
+
+/**
+ * Created by Jet_Wang on 2021/12/9.
+ */
+class HttpRequestConstant {
+
+    // Handler msg.what
+    public static final int MSG_HTTP_REQUEST = 0;
+
+    // Handler msg.arg1
+    public static final int MSG_REQUEST_SUCCESS = 0;
+    public static final int MSG_REQUEST_FAIL = 1;
+
+    public static int DEFAULT_SOCKET_TIMEOUT = 10000;
+    public static int DEFAULT_SOCKET_BUFFER_SIZE = 8192;
+    public static int DEFAULT_HOST_CONNECTIONS = 400;
+    public static int DEFAULT_MAX_CONNECTIONS = 800;
+}
